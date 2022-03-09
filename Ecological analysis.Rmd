@@ -3,12 +3,123 @@ title: "Diatom-based ecological multivariate analyses"
 author: "Vélez-Agudelo Camilo"
 date: "8/3/2022"
 output:
- html_document:
-     toc: TRUE
-     toc_float: TRUE
+  html_notebook:
+    code_folding: "show"
+    toc: yes
+    toc_float: yes
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(vegan)
+library(rioja)
+library(ggplot2)
+library(ggpubr)
+library(kableExtra)
+library(gridExtra)
+library(rstatix)
 ```
 
+# **Diatom from Colorado River** #
+
+## Loading Biological Data ##
+
+This dataset contains diatom data of 15 modern surface sediments samples collected in the middle and lower basin of the Colora River, Patagonia.
+
+
+
+```{r}
+speciesRC <- readRDS("speciesRC.rds") ##Importing Diatom Data##
+```
+
+## Diatom diagram of common species ##
+
+Remove diatom taxa where relative abundance is less than 4%
+
+```{r}
+
+## This code estimates the relative abundance of each diatom specie##
+speciesRC.rel <- (decostand(
+    speciesRC,
+    "total",
+    MARGIN = 1)
+    ) * 100
+
+speciesRC.rel2 <- colSums(speciesRC.rel) ##Calculate column sums
+
+##Subset data keeping only diatom species with relative abundance greater than 4%##
+speciesRC.red <- speciesRC.rel[, which(speciesRC.rel2 > 4)]
+
+```
+
+Cluster analyses of untransformed diatom data.
+
+```{r Cluster.Analysis.RC, fig.show = "hold"}
+
+dis.brayRC <- vegdist(
+    x = speciesRC.rel,
+    method = "bray"
+    )
+
+clustRC <- chclust(
+    dis.brayRC, 
+    method = "coniss"
+    )
+
+plot(clustRC,labels = NULL)
+
+bstick(clustRC, plot = TRUE)
+
+```
+
+```{r Diatom.Diagram, fig.width=12}
+
+color.d <- c(
+    rep("darkseagreen4", 3), 
+    rep("gold2", 10), 
+    rep("chocolate3", 2)
+    )
+
+y.scale <- 1:15
+
+p1 <- strat.plot(
+    speciesRC.red,
+    xLeft = 0.07,
+    xRight = 1,
+    yBottom = 0.05,
+    yTop = 0.7,
+    y.rev = T, 
+    yvar = y.scale, 
+    y.tks = y.scale, 
+    scale.percent = T,
+    plot.line = F,
+    plot.bar = T,
+    lwd.bar = 16,
+    ylabel = "Sampling site",
+    srt.xlabel = 45,
+    xSpace = 0.005,
+    wa.order = "bottomleft",
+    x.pc.inc = 5,
+    x.pc.lab = T,
+    cex.ylabel = 1.5,
+    cex.xlabel = 1,
+    cex.yaxis = 0.8, 
+    col.bar = color.d,
+    col.line = color.d,
+    clust = clustRC,
+    tck = 5,
+    tcl = 0.1,
+    sep.bar = T,
+    add.smooth = F,
+    smooth.span = 0.1
+    )
+
+addClustZone(p1, clustRC, 4, col = "red")
+```
+
+
+## Diatom from Negro River ##
+
+## Diatom from Chubut River ##
