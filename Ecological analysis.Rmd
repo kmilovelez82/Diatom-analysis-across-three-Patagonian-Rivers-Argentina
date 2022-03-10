@@ -22,7 +22,7 @@ library(gridExtra)
 library(rstatix)
 ```
 
-# **Diatom from Colorado River** #
+# **Colorado River** #
 
 ## Loading Biological Data ##
 
@@ -56,7 +56,7 @@ speciesRC.red <- speciesRC.rel[, which(speciesRC.rel2 > 4)]
 
 Cluster analyses of untransformed diatom data.
 
-```{r Cluster.Analysis.RC, fig.show = "hold"}
+```{r Cluster.Analysis.RC, fig.align="center", fig.width=12, fig.height=6}
 
 dis.brayRC <- vegdist(
     x = speciesRC.rel,
@@ -68,8 +68,8 @@ clustRC <- chclust(
     method = "coniss"
     )
 
+par(mfrow=c(1,2))
 plot(clustRC,labels = NULL)
-
 bstick(clustRC, plot = TRUE)
 
 ```
@@ -120,7 +120,7 @@ addClustZone(p1, clustRC, 4, col = "red")
 ```
 
 
-# **Diatom from Negro River** #
+# **Negro River** #
 
 ## Loading Biological Data ##
 
@@ -153,7 +153,7 @@ speciesRN.red <- speciesRN.rel[, which(speciesRN.rel2 > 4)]
 
 Cluster analyses of untransformed diatom data.
 
-```{r Cluster.Analysis.RN}
+```{r Cluster.Analysis.RN, fig.width=12, fig.height=6}
 
 dis.brayRN <- vegdist(
     x = speciesRN.rel,
@@ -165,10 +165,9 @@ clustRN <- chclust(
     method = "coniss"
     )
 
+par(mfrow = c(1, 2))
 plot(clustRN,labels = NULL)
-
 bstick(clustRN, plot = TRUE)
-
 ```
 
 ```{r Diatom.Diagram.RN, fig.width=12}
@@ -218,15 +217,99 @@ addClustZone(p2, clustRN, 4, col = "red")
 ```
 
 
-# **Diatom from Chubut River** #
+## Non-metric Multidimensional Scaling (NMDS) ##
+
+Analyses based on the diatom composition from Negro River. Contour lines show a smoothed surface of the abundance relative of Staurosira binodis (a), Staurosira construens (b), Cocconeis placentula (c) and Cocconeis euglypta (d). Filled black circles represent the estimate abundance relative in each sampling site.
+
+```{r NMDS.RN, results=FALSE, fig.align="center", fig.width=12, fig.height=8}
+speciesRN.hel <- decostand(speciesRN, "hellinger") ##Transformation of the species data##
+
+speciesRN.nmds <- metaMDS(speciesRN.hel, distance = "bray")
+
+par(mfrow=c(2,2))
+ordisurf(
+  speciesRN.nmds, 
+  speciesRN.red[, "Staurosira.contruens.var.binodis"], 
+  main = "Staurosira binodis Relative Abundance",
+  bubble = TRUE,
+  pch = 16,
+  col = "darkseagreen4",
+  cex = 3,
+  xlim = c(-0.8, 0.8),
+  nlevels = 20,
+  display = "sites",
+  bg = "black"
+  )
+text(speciesRN.nmds,
+     display = "sites", 
+     cex=0.8
+     )
+
+ordisurf(
+  speciesRN.nmds, 
+  speciesRN.red[, "Staurosira.construens"], 
+  main = "Staurosira construens Relative Abundance",
+  bubble = TRUE,
+  pch = 16,
+  col = "darkseagreen4",
+  cex = 3,
+  nlevels = 20,
+  display = "sites",
+  bg = "black"
+  )
+text(speciesRN.nmds,
+     display = "sites", 
+     cex=0.8
+     )
+
+ordisurf(
+  speciesRN.nmds, 
+  speciesRN.red[, "Cocconeis.placentula"], 
+  main = "Cocconeis placentula Relative Abundance",
+  bubble = TRUE,
+  pch = 16,
+  col = "darkseagreen4",
+  cex = 3,
+  nlevels = 20,
+  display = "sites",
+  bg = "black"
+  )
+text(speciesRN.nmds,
+     display = "sites", 
+     cex=0.8
+     )
+
+ordisurf(
+  speciesRN.nmds, 
+  speciesRN.red[, "Cocconeis.euglypta"], 
+  main = "Cocconeis euglypta Relative Abundance",
+  bubble = TRUE,
+  pch = 16,
+  col = "darkseagreen4",
+  cex = 3,
+  nlevels = 20,
+  display = "sites",
+  bg = "black"
+  )
+text(speciesRN.nmds,
+     display = "sites", 
+     cex=0.8
+     )
+
+```
+
+
+# **Chubut River** #
 
 ## Loading Biological Data ##
 
-This dataset contains diatom data of 17 modern surface sediments samples collected in the middle and lower basin of the Chubut River, Patagonia.
+This dataset contains diatom data of 17 modern surface sediments samples collected at the middle and lower basin of the Chubut River, Patagonia.
+
 
 
 ```{r}
 speciesCH <- readRDS("speciesCH.rds") ##Importing Diatom Data##
+
 ```
 
 ## Diatom diagram of common species ##
@@ -251,7 +334,7 @@ speciesCH.red <- speciesCH.rel[, which(speciesCH.rel2 > 4)]
 
 Cluster analyses of untransformed diatom data.
 
-```{r Cluster.Analysis.CH}
+```{r Cluster.Analysis.CH, fig.width=12, fig.height=6}
 
 dis.brayCH <- vegdist(
     x = speciesCH.rel,
@@ -263,10 +346,9 @@ clustCH <- chclust(
     method = "coniss"
     )
 
+par(mfrow = c(1, 2))
 plot(clustCH,labels = NULL)
-
 bstick(clustCH, plot = TRUE)
-
 ```
 
 ```{r Diatom.Diagram.CH, fig.width=12}
@@ -314,4 +396,137 @@ p3 <- strat.plot(
 
 addClustZone(p3, clustCH, 4, col = "red")
 ```
+
+
+## Non-metric Multidimensional Scaling (NMDS) ##
+
+Analyses based on the diatom composition from Negro River. Contour lines show a smoothed surface of the abundance relative of Amphora affinis (a), Cocconeis placentula (b), Stephanodiscus agassizensis (c) and Cocconeis euglypta (d). Filled black circles represent the estimate abundance relative in each sampling site.
+
+```{r NMDS.CH, results=FALSE, fig.align="center", fig.width=12, fig.height=8}
+speciesCH.hel <- decostand(speciesCH, "hellinger") ##Transformation of the species data##
+
+speciesCH.nmds <- metaMDS(speciesCH.hel, distance = "bray")
+
+par(mfrow = c(2, 2))
+ordisurf(
+  speciesCH.nmds, 
+  speciesCH.red[, "Amphora.affinis"], 
+  main = "Amphora affinis Relative Abundance",
+  bubble = TRUE,
+  pch = 16,
+  col = "darkseagreen4",
+  cex = 3,
+  nlevels = 20,
+  display = "sites",
+  bg = "black"
+  )
+text(speciesCH.nmds,
+     display = "sites", 
+     cex=0.8
+     )
+
+ordisurf(
+  speciesCH.nmds, 
+  speciesCH.red[, "Cocconeis.placentula"], 
+  main = "Cocconeis placentula Relative Abundance",
+  bubble = TRUE,
+  pch = 16,
+  col = "darkseagreen4",
+  cex = 3,
+  nlevels = 20,
+  display = "sites",
+  bg = "black"
+  )
+text(speciesCH.nmds,
+     display = "sites", 
+     cex=0.8
+     )
+
+ordisurf(
+  speciesCH.nmds, 
+  speciesCH.red[, "Stephanodiscus.agassizensis"], 
+  main = "Stephanodiscus agassizensis Relative Abundance",
+  bubble = TRUE,
+  pch = 16,
+  col = "darkseagreen4",
+  cex = 3,
+  nlevels = 20,
+  display = "sites",
+  bg = "black"
+  )
+text(speciesCH.nmds,
+     display = "sites", 
+     cex=0.8
+     )
+
+ordisurf(
+  speciesCH.nmds, 
+  speciesCH.red[, "Cocconeis.euglypta"], 
+  main = "Cocconeis euglypta Relative Abundance",
+  bubble = TRUE,
+  pch = 16,
+  col = "darkseagreen4",
+  cex = 3,
+  nlevels = 20,
+  display = "sites",
+  bg = "black"
+  )
+text(speciesCH.nmds,
+     display = "sites", 
+     cex=0.8
+     )
+
+```
+
+
+
+# **Redundancy Analysis (RDA)** #
+
+Two RDAs were performed, one with the complete dataset (49 sampling sites)
+and one with the reduced data. The estuarine sites were excluded of the analysis in the last dataset, so as to identify correlations among variables and diatom species only in freshwater sites. In addition, winter and summer values of physical and hidrochemical variables were averaged before performing these ordinations.
+
+##Preparation of Biological and Environmental Data##
+
+```{r data.transformed}
+##Transformation of diatom data##
+speciesRC.red.hel <- decostand(speciesRC.red, "hellinger")
+speciesRN.red.hel <- decostand(speciesRN.red, "hellinger")
+speciesCH.red.hel <- decostand(speciesRN.red, "hellinger")
+```
+
+```{r colnames.changed}
+##Code assignment##
+
+colnames(speciesRC.red.hel) <- names[[1]][, 2]
+colnames(speciesRN.red.hel) <- names[[2]][, 2]
+colnames(speciesCH.red.hel) <- names[[3]][, 2]
+```
+
+```{r loading.env}
+##Loading Environmental Data##
+varam <- readRDS("varam.rds")
+
+##Physical and hydrochemical data##
+chem <- varam[, 1:14]
+
+##Sedimentological data#
+sed <- varam[, 15:17]
+```
+
+##Selection of Explanatory Variables##
+
+Preliminary CCA with forward selection based on permutation test (999 permutations, p < 0.05), was then used as an appropriate procedure to
+identify collinear variables, to reduce the number of explanatory variables and thus establishing a minimal data set that significantly improves the quality of the diatom–environment model
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
 
