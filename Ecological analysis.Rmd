@@ -298,7 +298,6 @@ text(speciesRN.nmds,
 
 ```
 
-
 # **Chubut River** #
 
 ## Loading Biological Data ##
@@ -482,16 +481,15 @@ text(speciesCH.nmds,
 
 # **Redundancy Analysis (RDA)** #
 
-Two RDAs were performed, one with the complete dataset (49 sampling sites)
-and one with the reduced data. The estuarine sites were excluded of the analysis in the last dataset, so as to identify correlations among variables and diatom species only in freshwater sites. In addition, winter and summer values of physical and hidrochemical variables were averaged before performing these ordinations.
+Two RDAs were performed, one with the complete dataset (49 sampling sites) and one with the reduced data. The estuarine sites were excluded of the analysis in the last dataset, so as to identify correlations among variables and diatom species only in freshwater sites. In addition, winter and summer values of physical and hidrochemical variables were averaged before performing these ordinations.
 
-##Preparation of Biological and Environmental Data##
+## Preparation of Biological and Environmental Data ##
 
 ```{r data.transformed}
 ##Transformation of diatom data##
 speciesRC.red.hel <- decostand(speciesRC.red, "hellinger")
 speciesRN.red.hel <- decostand(speciesRN.red, "hellinger")
-speciesCH.red.hel <- decostand(speciesRN.red, "hellinger")
+speciesCH.red.hel <- decostand(speciesCH.red, "hellinger")
 ```
 
 ```{r colnames.changed}
@@ -502,31 +500,150 @@ colnames(speciesRN.red.hel) <- names[[2]][, 2]
 colnames(speciesCH.red.hel) <- names[[3]][, 2]
 ```
 
+```{r merge.datasets}
+##Function for combining the diatom datasets of the rivers##
+
+species.complete <- Merge(
+  speciesRC.red.hel,
+  speciesRN.red.hel,
+  speciesCH.red.hel
+  )
+```
+
+
 ```{r loading.env}
 ##Loading Environmental Data##
 varam <- readRDS("varam.rds")
 
-##Physical and hydrochemical data##
-chem <- varam[, 1:14]
+##Physical and hydrochemical data - LogTranformation (except pH)##
+chem <- log1p(varam[, 2:14])
+chem <- cbind(varam$pH, chem)
+names(chem)[1] <- "pH"
 
-##Sedimentological data#
-sed <- varam[, 15:17]
+##Sedimentological data - Standardized#
+sed <- decostand(varam[, 15:17], MARGIN =2, "standardize") 
 ```
 
-##Selection of Explanatory Variables##
+## Partial RDA (Hydrochemical vs Sedimentological Variables) ##
+
+Variance partitioning with physical and chemical variables as constraining variables and sedimentological variables (grain size and TOC) as covariables was implemented to determine the amount of variation explained by each group.
+
+```{r Variace.partitionig, fig.width=12}
+
+RDA.part <- varpart(
+  species.complete, 
+  chem, 
+  sed,
+  chisquare = T
+  )
+
+plot(
+  RDA.part, 
+  digits = 2, 
+  bg = c("chocolate2", "lightseagreen"),
+  alpha = 100,
+  id.size = 1.5,
+  Xnames = c("Chemical \nvariables", "Sedimentological \nvariables"))
+```
+
+Variance partitioning analysis displayed that physical and chemical variables of the data independently explained 40.4% of the community diatoms turnover, whereas the individual effect of the sedimentological variables only accounted for 1.5%. Because grain size and TOC did not significantly contribute to the explained variance
+in the diatom data, these variables were excluded from the next ordinations.
+
+## Selection of Explanatory Variables - Complete Data ##
 
 Preliminary CCA with forward selection based on permutation test (999 permutations, p < 0.05), was then used as an appropriate procedure to
 identify collinear variables, to reduce the number of explanatory variables and thus establishing a minimal data set that significantly improves the quality of the diatom–environment model
 
-```{r}
+```{r selection.variables}
+##RDA with chemical variables including estuarine and inland sites##
+species.complete.rda <- rda(species.complete ~ ., data = chem)
+
+select.exp <- rda(species.complete ~ 1, data = chem)
+step.forward <- 
+  ordistep(select.exp, 
+           scope = formula(species.complete.rda), 
+           direction = "forward", 
+           permutations = how(nperm = 999)
+  )
+RsquareAdj(step.forward)
+```
+
+Forward selection with unrestricted permutation test showed that pH (p = 0.001), SO4 (p = 0.001), salinity (p = 0.001), HCO3 (p = 0.001), K (p = 0.006), SiO2 (p = 0.009) and Cl (p = 0.014) exert a significant and independent influence on the species distribution.
+
+## Triplot RDA - Complete Data ##
+
+```{r RDA.complete}
+##RDA with hydrochemical variables selected (vs)##
+species.rda.vs <- rda(species.complete ~ SO4 + pH + Sal + CO3H + SIO2 + Cl, data = chem)
+```
+
+```{r triplot.rda, fig.align="center", fig.width=8}
+
+plot(species.rda.vs, 
+     scaling = 2, 
+     display = c("sp", "cn", "sites"),
+     xlim = c(-0.6, 0.6),
+     main = "RDA Analysis \nestuarine and inland sites")
+points(
+  species.rda.vs,
+  "sp",
+  pch = 16,
+  col = "red"
+  )
+points(
+  species.rda.vs,
+  "sites",
+  pch = 17,
+  col = "black"
+  )
+text(
+  species.rda.vs, 
+  display = "sites", 
+  cex = 0.5, 
+  col = "black"
+  )
+ef <- with(
+  varam,
+  ordisurf(
+    species.rda.vs,
+    Sal,
+    col = "darkseagreen4",
+    display = "lc", 
+    nlevels = 10,
+    add = TRUE)
+  )
+
+```
+
+## Partial RDA - Complete Data ##
+
+```{r Partial.RDA.Final, fig.width=10, fig.align="center"}
+
+RDA.part1 <- varpart(
+  species.complete, 
+  ~ Sal,
+  ~ pH,
+  ~ SO4,
+  ~ CO3H + SIO2 + Cl,
+  data = chem,
+  chisquare = T
+  )
+
+plot(
+  RDA.part1, 
+  digits = 2, 
+  bg = c("chocolate2", "lightseagreen", "gold2", "gray"),
+  alpha = 100,
+  id.size = 1.5,
+  Xnames = c("Salinity", "pH", "SO4", "HCO3 + \nSiO2 + \nCl")
+  )
 
 ```
 
 
 
-
-
-
+## Selection of Explanatory Variables - Inland Data ##
+## Triplo RDA - Inland Data ##
 
 
 
