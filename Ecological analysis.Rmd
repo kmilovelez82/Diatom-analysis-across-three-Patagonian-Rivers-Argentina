@@ -510,7 +510,6 @@ species.complete <- Merge(
   )
 ```
 
-
 ```{r loading.env}
 ##Loading Environmental Data##
 varam <- readRDS("varam.rds")
@@ -640,10 +639,104 @@ plot(
 
 ```
 
-
-
 ## Selection of Explanatory Variables - Inland Data ##
-## Triplo RDA - Inland Data ##
+
+In this case, the estuarine sites (RC1-RC3, RN1-RN3 and CH1-CH5) were removed from the training set because preliminary ordination analyses (with complete data) indicated that salinity, pH and sulphate exerted a strong and similar influence in the diatom response.
+
+```{r Loading.data.inland}
+##Preparing Data##
+species.inland <- species.complete[-c(1:3, 16:18, 34:38),]
+species.inland <- species.inland[, colSums(species.inland) > 0]
+
+##Hydrochemical Dat##
+chem.inland <- chem[-c(1:3, 16:18, 34:38),]
+```
+
+```{r selection.variables.inland}
+##RDA with chemical variables with only inland sites##
+species.inland.rda <- rda(species.inland ~ ., data = chem.inland)
+
+select.exp.inland <- rda(species.inland ~ 1, data = chem.inland)
+step.forward.inland <- 
+  ordistep(select.exp.inland, 
+           scope = formula(species.inland.rda), 
+           direction = "forward", 
+           permutations = how(nperm = 999)
+  )
+RsquareAdj(step.forward.inland)
+```
+
+Forward selection with unrestricted permutation test showed that pH (p = 0.001), SO4 (p = 0.001), salinity (p = 0.001) and HCO3 (p = 0.001) exert a significant and independent influence on the species distribution.
+
+## Triplot RDA - Inland Data ##
+
+```{r RDA.inland}
+##RDA with hydrochemical variables selected (vs)##
+species.inland.vs <- rda(species.inland ~ pH + Sal + CO3H, data = chem.inland)
+```
+
+```{r triplot.rda.inland, fig.align="center", fig.width=8}
+
+plot(species.inland.vs, 
+     scaling = 2, 
+     display = c("sp", "cn", "sites"),
+     xlim = c(-1, 1),
+     main = "RDA Analysis \nwith only the inland sites")
+points(
+  species.inland.vs,
+  "sp",
+  pch = 16,
+  col = "red"
+  )
+points(
+  species.inland.vs,
+  "sites",
+  pch = 17,
+  col = "black"
+  )
+text(
+  species.inland.vs, 
+  display = "sites", 
+  cex = 0.5, 
+  col = "black"
+  )
+ef <- with(
+  varam[-c(1:3, 16:18, 34:38),],
+  ordisurf(
+    species.inland.vs,
+    Sal,
+    col = "darkseagreen4",
+    display = "lc", 
+    nlevels = 10,
+    add = TRUE)
+  )
+
+```
+
+## Partial RDA - Inland Data ##
+
+```{r Partial.RDA.Final.inland, fig.width=10, fig.align="center"}
+
+RDA.part2 <- varpart(
+  species.inland, 
+  ~ Sal,
+  ~ pH,
+  ~ CO3H,
+  data = chem.inland,
+  chisquare = T
+  )
+
+plot(
+  RDA.part2, 
+  digits = 2, 
+  bg = c("chocolate2", "lightseagreen", "gold2"),
+  alpha = 100,
+  id.size = 1.5,
+  Xnames = c("Salinity", "pH", "HCO3")
+  )
+
+```
+
 
 
 
