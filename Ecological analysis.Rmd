@@ -479,6 +479,192 @@ text(speciesCH.nmds,
 
 
 
+# **Diversity Indices** #
+
+## Diversity Colorado River ##
+```{r Diversity.RC}
+
+S.RC <- specnumber(speciesRC.rel) ##Species richness##
+H.RC <- diversity(speciesRC.rel, index="shannon") ##Shannon index##
+D.RC <- diversity(speciesRC.rel, index="simpson") ##Simpson index##
+INV.RC <- diversity(speciesRC.rel,index="invsimpson") ##Simpson inverse##
+N.RC <- 1/(1-D.RC) ##Effective Number of Simpson##
+J.RC <- H.RC/log(S.RC) ##Pielou Evenness
+
+divRC <- data.frame(S.RC, H.RC, D.RC, INV.RC, N.RC, J.RC)
+```
+
+```{r Table.diversityRC}
+kable(divRC, digits = 2, caption = "Diversity indices in the Colorado River", col.names = c("Sp. Richness", "Shannon", "Simpson", "Simpson Inv.", "Effecive Simp", "Pielou")) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+## Diversity Negro River ##
+```{r Diversity.RN}
+
+S.RN <- specnumber(speciesRN.rel) ##Species richness##
+H.RN <- diversity(speciesRN.rel, index="shannon") ##Shannon index##
+D.RN <- diversity(speciesRN.rel, index="simpson") ##Simpson index##
+INV.RN <- diversity(speciesRN.rel,index="invsimpson") ##Simpson inverse##
+N.RN <- 1/(1-D.RN) ##Effective Number of Simpson##
+J.RN <- H.RN/log(S.RN) ##Pielou Evenness
+
+divRN <- data.frame(S.RN, H.RN, D.RN, INV.RN, N.RN, J.RN)
+```
+
+```{r Table.diversityRN}
+kable(divRN, digits = 2, caption = "Diversity indices in the Negro River", col.names = c("Sp. Richness", "Shannon", "Simpson", "Simpson Inv.", "Effecive Simp", "Pielou")) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+## Diversity Chubut River ##
+```{r Diversity.CH}
+
+S.CH <- specnumber(speciesCH.rel) ##Species richness##
+H.CH <- diversity(speciesCH.rel, index="shannon") ##Shannon index##
+D.CH <- diversity(speciesCH.rel, index="simpson") ##Simpson index##
+INV.CH <- diversity(speciesCH.rel,index="invsimpson") ##Simpson inverse##
+N.CH <- 1/(1-D.CH) ##Effective Number of Simpson##
+J.CH <- H.CH/log(S.CH) ##Pielou Evenness
+
+divCH <- data.frame(S.CH, H.CH, D.CH, INV.CH, N.CH, J.CH)
+```
+
+```{r Table.diversityCH}
+kable(divCH, digits = 2, caption = "Diversity indices in the Chubut River", col.names = c("Sp. Richness", "Shannon", "Simpson", "Simpson Inv.", "Effecive Simp", "Pielou")) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+
+## Comparison of Diversity Indices ##
+
+```{r Diversity.indices.comparisons}
+
+names(divRC) <- c("Richness", "Shannon", "Simpson", "Simpson.Inv", "Effective.Simp", "Pielou")
+
+names(divRN) <- c("Richness", "Shannon", "Simpson", "Simpson.Inv", "Effective.Simp", "Pielou")
+
+names(divCH) <- c("Richness", "Shannon", "Simpson", "Simpson.Inv", "Effective.Simp", "Pielou")
+
+Diversity <- Merge(divRC, divRN, divCH)
+River <- c(rep("Colorado", 15), rep("Negro", 18), rep("Chubut", 16))
+Diversity <- cbind(River, Diversity)
+
+d1 <- ggplot(
+  Diversity,
+  aes(x = River, y= Richness, fill = River)
+  )+
+  geom_boxplot(
+    outlier.colour = "red",
+    outlier.shape = 18,
+    outlier.size = 4, 
+    notch = T
+    ) +
+  labs(
+    title="Species Richness (S)"
+    ) +
+  scale_fill_brewer(
+    palette="Blues"
+    )+
+  theme_grey()
+
+d2 <- ggplot(
+  Diversity,
+  aes(x = River, y= Shannon, fill = River)
+  )+
+  geom_boxplot(
+    outlier.colour = "red",
+    outlier.shape = 18,
+    outlier.size = 4, 
+    notch = T
+    ) +
+  labs(
+    title="Shannon Diversity (H)"
+    ) +
+  scale_fill_brewer(
+    palette="Blues"
+    )+
+  theme_grey()
+
+d3 <- ggplot(
+  Diversity,
+  aes(x = River, y= Simpson, fill = River)
+  )+
+  geom_boxplot(
+    outlier.colour = "red",
+    outlier.shape = 18,
+    outlier.size = 4, 
+    notch = T
+    ) +
+  labs(
+    title="Simpson Dominance (D)"
+    ) +
+  scale_fill_brewer(
+    palette="Blues"
+    )+
+  theme_grey()
+
+d4 <- ggplot(
+  Diversity,
+  aes(x = River, y= Simpson.Inv, fill = River)
+  )+
+  geom_boxplot(
+    outlier.colour = "red",
+    outlier.shape = 18,
+    outlier.size = 4, 
+    notch = T
+    ) +
+  labs(
+    title="Simpson Inverse"
+    ) +
+  scale_fill_brewer(
+    palette="Blues"
+    )+
+  theme_grey()
+
+d5 <- ggplot(
+  Diversity,
+  aes(x = River, y= Effective.Simp, fill = River)
+  )+
+  geom_boxplot(
+    outlier.colour = "red",
+    outlier.shape = 18,
+    outlier.size = 4, 
+    notch = T
+    ) +
+  labs(
+    title="Effective Simpson"
+    ) +
+  scale_fill_brewer(
+    palette="Blues"
+    )+
+  theme_grey()
+
+d6 <- ggplot(
+  Diversity,
+  aes(x = River, y= Pielou, fill = River)
+  )+
+  geom_boxplot(
+    outlier.colour = "red",
+    outlier.shape = 18,
+    outlier.size = 4, 
+    notch = T
+    ) +
+  labs(
+    title="Pielou Evenness"
+    ) +
+  scale_fill_brewer(
+    palette="Blues"
+    )+
+  theme_grey()
+
+```
+
+```{r Plot.diversity, fig.width=12, fig.height=6}
+
+grid.arrange(d1, d2, d3, d4, d5, d6, nrow = 2, ncol =3)
+```
+
 # **Redundancy Analysis (RDA)** #
 
 Two RDAs were performed, one with the complete dataset (49 sampling sites) and one with the reduced data. The estuarine sites were excluded of the analysis in the last dataset, so as to identify correlations among variables and diatom species only in freshwater sites. In addition, winter and summer values of physical and hidrochemical variables were averaged before performing these ordinations.
@@ -742,6 +928,9 @@ plot(
 
 
 # **Species Response Model (GLM)** #
+
+Determination of species response along the fluvials gradient based on Generalized Linear Model (GLM).
+
 ## Estuarine Species ##
 
 ```{r glm.estuaries}
@@ -1233,12 +1422,14 @@ p23 <- ggplot(
     y = "Relative Abundace",
     title = "Stephanodiscus agassizensis"
   ) +
+  theme(legend.title = "GLM fit") +
   theme_minimal()
 
 ```
 
-```{r plots.glm.inland, fig.width=12, fig.height=10}
+```{r plots.glm.inland, fig.width=14, fig.height=10}
 
 grid.arrange(p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, nrow =3, ncol = 4)
 ```
+
 
