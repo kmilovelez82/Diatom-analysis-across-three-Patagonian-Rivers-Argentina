@@ -740,3 +740,505 @@ plot(
 
 
 
+
+# **Species Response Model (GLM)** #
+## Estuarine Species ##
+
+```{r glm.estuaries}
+speciesRC.red1 <- speciesRC.red
+speciesRN.red1 <- speciesRN.red
+speciesCH.red1 <- speciesCH.red
+
+colnames(speciesRC.red1) <- names[[1]][, 2]
+colnames(speciesRN.red1) <- names[[2]][, 2]
+colnames(speciesCH.red1) <- names[[3]][, 2]
+
+species.rivers <- Merge(
+  speciesRC.red1,
+  speciesRN.red1,
+  speciesCH.red1
+)
+
+SRM.estuaries <- cbind(species.rivers, varam$Sal)
+names(SRM.estuaries)[92] <- "Salinity"
+
+p4 <- ggplot(
+  SRM.estuaries, 
+  aes(Salinity, AMAF/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Salinity (‰)",
+    y = "Relative Abundace",
+    title = "Amphora affinis"
+  ) +
+  theme_minimal()
+
+p5 <- ggplot(
+  SRM.estuaries, 
+  aes(Salinity, CYBE/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Salinity (‰)",
+    y = "Relative Abundace",
+    title = "Cymatosira belgica"
+  ) +
+  theme_minimal()
+
+p6 <- ggplot(
+  SRM.estuaries, 
+  aes(Salinity, DEMI/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Salinity (‰)",
+    y = "Relative Abundace",
+    title = "Delphineis minutissima"
+  ) +
+  theme_minimal()
+
+p7 <- ggplot(
+  SRM.estuaries, 
+  aes(Salinity, DESU/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Salinity (‰)",
+    y = "Relative Abundace",
+    title = "Delphineis surirella"
+  ) +
+  theme_minimal()
+
+p8 <- ggplot(
+  SRM.estuaries, 
+  aes(Salinity, OPMU/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Salinity (‰)",
+    y = "Relative Abundace",
+    title = "Opephora mutabilis"
+  ) +
+  theme_minimal()
+
+p9 <- ggplot(
+  SRM.estuaries, 
+  aes(Salinity, PASU/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Salinity (‰)",
+    y = "Relative Abundace",
+    title = "Paralia sulcata"
+  ) +
+  theme_minimal()
+
+p10 <- ggplot(
+  SRM.estuaries, 
+  aes(Salinity, PACO/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Salinity (‰)",
+    y = "Relative Abundace",
+    title = "P. sulcata var. coronata"
+  ) +
+  theme_minimal()
+
+p11 <- ggplot(
+  SRM.estuaries, 
+  aes(Salinity, RHAM/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Salinity (‰)",
+    y = "Relative Abundace",
+    title = "Rhaphoneis amphiceros"
+  ) +
+  theme_minimal()
+```
+
+```{r plots.glm.estuaries, fig.width=12, fig.height=6}
+
+grid.arrange(p4, p5, p6, p7, p8, p9, p10, p11, nrow =2, ncol = 4)
+```
+
+
+## Inland Species ##
+
+```{r glm.inland}
+SRM.inland <- cbind(species.rivers, varam$Cond*1000)
+names(SRM.inland)[92] <- "Conductivity"
+
+p12 <- ggplot(
+  SRM.inland, 
+  aes(Conductivity, STVE/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Conductivity",
+    y = "Relative Abundace",
+    title = "Staurosira venter"
+  ) +
+  theme_minimal()
+
+p13 <- ggplot(
+  SRM.inland, 
+  aes(Conductivity, PUGL/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Conductivity",
+    y = "Relative Abundace",
+    title = "Punctastriata glubokoensis"
+  ) +
+  theme_minimal()
+
+p14 <- ggplot(
+  SRM.inland, 
+  aes(Conductivity, PULA/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Conductivity",
+    y = "Relative Abundace",
+    title = "Punctastriata glubokoensis"
+  ) +
+  theme_minimal()
+
+p15 <- ggplot(
+  SRM.inland, 
+  aes(Conductivity, EPSO/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Conductivity",
+    y = "Relative Abundace",
+    title = "Epithemia sorex"
+  ) +
+  theme_minimal()
+
+p16 <- ggplot(
+  SRM.inland, 
+  aes(Conductivity, PSBR/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Conductivity",
+    y = "Relative Abundace",
+    title = "Pseudostaurosira brevistriata"
+  ) +
+  theme_minimal()
+
+p17 <- ggplot(
+  SRM.inland, 
+  aes(Conductivity, STCO/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Conductivity",
+    y = "Relative Abundace",
+    title = "Staurosira construens"
+  ) +
+  theme_minimal()
+
+p18 <- ggplot(
+  SRM.inland, 
+  aes(Conductivity, STBI/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Conductivity",
+    y = "Relative Abundace",
+    title = "Staurosira binodis"
+  ) +
+  theme_minimal()
+
+p19 <- ggplot(
+  SRM.inland, 
+  aes(Conductivity, CYOC/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Conductivity",
+    y = "Relative Abundace",
+    title = "Cyclotella ocellata"
+  ) +
+  theme_minimal()
+
+p20 <- ggplot(
+  SRM.inland, 
+  aes(Conductivity, COPL/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Conductivity",
+    y = "Relative Abundace",
+    title = "Cocconeis placentula"
+  ) +
+  theme_minimal()
+
+p21 <- ggplot(
+  SRM.inland, 
+  aes(Conductivity, COPE/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Conductivity",
+    y = "Relative Abundace",
+    title = "Cocconeis pediculus"
+  ) +
+  theme_minimal()
+
+p22 <- ggplot(
+  SRM.inland, 
+  aes(Conductivity, COEU/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Conductivity",
+    y = "Relative Abundace",
+    title = "Cocconeis euglypta"
+  ) +
+  theme_minimal()
+
+p23 <- ggplot(
+  SRM.inland, 
+  aes(Conductivity, SAGA/100)
+  ) + 
+  geom_point(
+    shape = 18,
+    size = 3,
+    color = "blue"
+    ) + 
+  geom_smooth(
+    method = "glm", 
+    method.args = list(family = "quasibinomial"),
+    linetype = "dashed",
+    color = "darkred",
+    fill = "lightskyblue3"
+    )+
+  labs(
+    x = "Conductivity",
+    y = "Relative Abundace",
+    title = "Stephanodiscus agassizensis"
+  ) +
+  theme_minimal()
+
+```
+
+```{r plots.glm.inland, fig.width=12, fig.height=10}
+
+grid.arrange(p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, nrow =3, ncol = 4)
+```
+
