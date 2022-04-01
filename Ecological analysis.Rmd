@@ -3,10 +3,11 @@ title: "Diatom-based ecological multivariate analyses"
 author: "Vélez-Agudelo Camilo"
 date: "8/3/2022"
 output:
-  html_notebook:
+  html_document:
     code_folding: "show"
     toc: yes
     toc_float: yes
+    keep_md: true
 ---
 
 ```{r setup, include=FALSE}
@@ -26,9 +27,7 @@ library(rstatix)
 
 ## Loading Biological Data ##
 
-This dataset contains diatom data of 15 modern surface sediments samples collected in the middle and lower basin of the Colora River, Patagonia.
-
-
+This dataset contains diatom data of 15 modern surface sediments samples collected in the middle and lower basin of the Colorado River, Patagonia.
 
 ```{r}
 speciesRC <- readRDS("speciesRC.rds") ##Importing Diatom Data##
@@ -678,25 +677,10 @@ speciesRN.red.hel <- decostand(speciesRN.red, "hellinger")
 speciesCH.red.hel <- decostand(speciesCH.red, "hellinger")
 ```
 
-```{r colnames.changed}
-##Code assignment##
-
-colnames(speciesRC.red.hel) <- names[[1]][, 2]
-colnames(speciesRN.red.hel) <- names[[2]][, 2]
-colnames(speciesCH.red.hel) <- names[[3]][, 2]
-```
-
-```{r merge.datasets}
-##Function for combining the diatom datasets of the rivers##
-
-species.complete <- Merge(
-  speciesRC.red.hel,
-  speciesRN.red.hel,
-  speciesCH.red.hel
-  )
-```
-
 ```{r loading.env}
+##Loading Diatom Data##
+species.complete <- readRDS("species.complete.rds")
+
 ##Loading Environmental Data##
 varam <- readRDS("varam.rds")
 
@@ -934,19 +918,8 @@ Determination of species response along the fluvials gradient based on Generaliz
 ## Estuarine Species ##
 
 ```{r glm.estuaries}
-speciesRC.red1 <- speciesRC.red
-speciesRN.red1 <- speciesRN.red
-speciesCH.red1 <- speciesCH.red
 
-colnames(speciesRC.red1) <- names[[1]][, 2]
-colnames(speciesRN.red1) <- names[[2]][, 2]
-colnames(speciesCH.red1) <- names[[3]][, 2]
-
-species.rivers <- Merge(
-  speciesRC.red1,
-  speciesRN.red1,
-  speciesCH.red1
-)
+species.rivers <- readRDS("species.rivers.rds")
 
 SRM.estuaries <- cbind(species.rivers, varam$Sal)
 names(SRM.estuaries)[92] <- "Salinity"
